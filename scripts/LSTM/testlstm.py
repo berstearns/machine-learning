@@ -40,7 +40,6 @@ nWords_inPhrase = 20
 i = 0
 for phrase in corpus:
 	if i < 2:
-		print(phrase)
 		i+=1
 
 	'''for each word in the phrase, append the idx of the word in the vocabulary 
@@ -66,7 +65,7 @@ for phrase in corpus:
 
 ''' makes all phrases lists of the same size , still list of idx's ''' 
 phrasesList = sequence.pad_sequences(phrasesList, maxlen=nWords_inPhrase)
-
+print(phrasesList)
 
 phrases_train = []
 for phrase_idx in range(len(phrasesList)):
