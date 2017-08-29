@@ -4,6 +4,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, LSTM, Embedding
 from keras.preprocessing import sequence
 
+import h5py
 import os
 import re
 
@@ -22,8 +23,9 @@ for filename in os.listdir(addr)[:500]:
     corpus.append(f.read())
     f.close()
 
-# take the first 2k texts. Ignore the rest
-corpus = corpus[:2000]
+# take the first nPhrasesTaken. Ignore the rest
+nPhrasesTaken = 200
+corpus = corpus[:nPhrasesTaken]
 
 print('Creating vocabulary...')
 
@@ -36,13 +38,9 @@ vocabulary = cv_model.vocabulary_
 
 ''' each phrase is a list of idx's '''
 phrasesList = []
+# takes in consideration only the first nWords_inPhrase
 nWords_inPhrase = 20
-i = 0
 for phrase in corpus:
-	if i < 2:
-		print(phrase)
-		i+=1
-
 	'''for each word in the phrase, append the idx of the word in the vocabulary 
 	   in the order of appearance in the phrase '''
 	wordsIdxList = []
@@ -54,19 +52,16 @@ for phrase in corpus:
 			    word = word.lower()
 			    wordIdx_inVocab = vocabulary[word]
 			    wordsIdxList.append(wordIdx_inVocab)
-
-
 			except:
-				print("pulando o try",word)
-
+				pass
 			finally:
 				count += 1
 	phrasesList.append(wordsIdxList)
 
 
 ''' makes all phrases lists of the same size , still list of idx's ''' 
-phrasesList = sequence.pad_sequences(phrasesList, maxlen=nWords_inPhrase)
-
+# padding='post' pad zeros to the right instead of padding to the left
+phrasesList = sequence.pad_sequences(phrasesList, maxlen=nWords_inPhrase, padding='post')
 
 phrases_train = []
 for phrase_idx in range(len(phrasesList)):
@@ -89,3 +84,4 @@ model = Sequential()
 model.add(LSTM(len(vocabulary), input_dim = len(vocabulary), input_length=nWords_inPhrase, return_sequences=True))
 model.compile(optimizer='rmsprop', loss='mse')
 model.fit(phrases_train, phrases_train, epochs=10, batch_size=32)
+model.save("mymodel.h5")
