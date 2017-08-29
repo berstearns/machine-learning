@@ -5,8 +5,14 @@ from keras.layers import Dense, Activation, LSTM, Embedding
 from keras.preprocessing import sequence
 
 import h5py
+import pickle
 import os
 import re
+
+
+base_dir = os.path.dirname(  os.path.dirname(   os.path.dirname( __file__   )    )    )
+data_dir = os.path.join( base_dir , "data"  )
+
 
 def build_tokenizer():
     token_pattern = r"(?u)\b\w\w+\b"
@@ -14,7 +20,7 @@ def build_tokenizer():
     return lambda doc: token_pattern.findall(doc)
 
 
-addr = "./aclImdb/train/unsup"
+addr = os.path.join(base_dir,"data","aclImdb","train","unsup")
 
 corpus = []
 print('Reading dataset...')
@@ -36,17 +42,16 @@ cv_model.fit(corpus)
 
 vocabulary = cv_model.vocabulary_
 
+
+# write vocabulary to file
+vocabulary_abspath = os.path.join(data_dir,'train_vocabulary.p')
+pickle.dump(vocabulary, open(vocabulary_abspath, 'wb')) 
+
 ''' each phrase is a list of idx's '''
 phrasesList = []
 # takes in consideration only the first nWords_inPhrase
 nWords_inPhrase = 20
 for phrase in corpus:
-<<<<<<< HEAD
-	if i < 2:
-		i+=1
-
-=======
->>>>>>> c68984ca555db24061e0b9bfa7c7e8a541ab1f0f
 	'''for each word in the phrase, append the idx of the word in the vocabulary 
 	   in the order of appearance in the phrase '''
 	wordsIdxList = []
@@ -66,13 +71,11 @@ for phrase in corpus:
 
 
 ''' makes all phrases lists of the same size , still list of idx's ''' 
-<<<<<<< HEAD
 phrasesList = sequence.pad_sequences(phrasesList, maxlen=nWords_inPhrase)
 print(phrasesList)
-=======
+
 # padding='post' pad zeros to the right instead of padding to the left
 phrasesList = sequence.pad_sequences(phrasesList, maxlen=nWords_inPhrase, padding='post')
->>>>>>> c68984ca555db24061e0b9bfa7c7e8a541ab1f0f
 
 phrases_train = []
 for phrase_idx in range(len(phrasesList)):
@@ -95,4 +98,5 @@ model = Sequential()
 model.add(LSTM(len(vocabulary), input_dim = len(vocabulary), input_length=nWords_inPhrase, return_sequences=True))
 model.compile(optimizer='rmsprop', loss='mse')
 model.fit(phrases_train, phrases_train, epochs=10, batch_size=32)
-model.save("mymodel.h5")
+model_abspath = os.path.join(data_dir,"mymodel.h5")
+model.save(model_abspath)
