@@ -10,3 +10,6 @@ import os
 import re
 
 model = load_model("mymodel.h5")
+
+print("model loaded")
+
