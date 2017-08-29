@@ -31,8 +31,6 @@ for filename in os.listdir(addr)[:500]:
 nPhrasesTaken = 200
 corpus = corpus[:nPhrasesTaken]
 
-print('Creating vocabulary...')
-
 # min_df defines a minimum number of times each word must have been used
 minFreq_ofWords = 10
 
@@ -79,8 +77,11 @@ for phrase_idx in range(len(phrasesList))[:5]:
 	    phrase_MatrixRepresentation   [word_idx]  [vocabIdx] = 1
 	phrases_train.append(  phrase_MatrixRepresentation  )
 phrases_train = np.array(phrases_train)
-print(phrases_train.shape)
 
 model_abspath = os.path.join(data_dir,"mymodel.h5")
 model = load_model(model_abspath)
-print(model.predict(phrases_train))
+
+phrase_lstmRepresentation = []
+for idx,phraseMatrix in enumerate(model.predict(phrases_train)):
+	phrase_lstmRepresentation.append(  sum(phraseMatrix/len(phraseMatrix))  )
+
