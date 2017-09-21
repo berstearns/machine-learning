@@ -1,8 +1,8 @@
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
-from keras.models import Sequential
+"""from keras.models import Sequential
 from keras.layers import Dense, Activation, LSTM, Embedding
-from keras.preprocessing import sequence
+from keras.preprocessing import sequence"""
 
 import h5py
 import pickle
@@ -24,14 +24,15 @@ addr = os.path.join(base_dir,"data","aclImdb","train","unsup")
 
 corpus = []
 print('Reading dataset...')
-for filename in os.listdir(addr)[:500]:
+nPhrasesToTake = 9999999
+for filename in os.listdir(addr)[:nPhrasesToTake]:
     f = open(addr+'/'+filename)
-    corpus.append(f.read())
+    text_fromFile = f.read()
+    corpus.append(text_fromFile)
     f.close()
 
 # take the first nPhrasesTaken. Ignore the rest
-nPhrasesTaken = 200
-corpus = corpus[:nPhrasesTaken]
+
 
 print('Creating vocabulary...')
 
@@ -71,9 +72,8 @@ for phrase in corpus:
 
 
 ''' makes all phrases lists of the same size , still list of idx's ''' 
-phrasesList = sequence.pad_sequences(phrasesList, maxlen=nWords_inPhrase)
-print(phrasesList)
-
+#phrasesList = sequence.pad_sequences(phrasesList, maxlen=nWords_inPhrase)
+#print(phrasesList)
 # padding='post' pad zeros to the right instead of padding to the left
 phrasesList = sequence.pad_sequences(phrasesList, maxlen=nWords_inPhrase, padding='post')
 
