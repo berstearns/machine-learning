@@ -16,6 +16,7 @@ from nltk.stem.porter import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 import nltk
 import os
+import sys
 import pickle
 
 def configEnv():# {{{
@@ -49,19 +50,20 @@ def tokenize_doc(doc):# {{{
         preproc_doc.append(tknz_paragraph)
     return preproc_doc# }}}
 if __name__ == "__main__":
+    trainOrTest = sys.argv[1]
     env = configEnv()
     categories = ['alt.atheism', 'soc.religion.christian']
-    newsgroups_train = fetch_20newsgroups(subset='train', categories=categories)
-    newsgroups_test = fetch_20newsgroups(subset='test', categories=categories)
+    newsgroups_set = fetch_20newsgroups(subset=trainOrTest, categories=categories)
     class_names = ['atheism', 'christian']
 
     preprocessed_docs = []
-    for doc in newsgroups_train.data:
+    for doc in newsgroups_set.data:
         preproc_doc = tokenize_doc(doc)
         preproc_doc = " ".join(preproc_doc)
         preprocessed_docs.append(preproc_doc)
 
-    preprocessedDocs_abspath = os.path.join( env["preproc_dir"],"preproc_docs")
+    preprocessedDocs_abspath = os.path.join( env["preproc_dir"]\
+            ,trainOrTest,"preproc_docs")
     for idx,pre_doc in enumerate(preprocessed_docs):
         doc_abspath = preprocessedDocs_abspath+str(idx)+".pickle"
         filehandler = open(doc_abspath,"wb")
