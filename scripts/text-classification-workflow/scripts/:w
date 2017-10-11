@@ -1,0 +1,31 @@
+import os
+import pickle
+from sklearn.feature_extraction.text import CountVectorizer
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Activation, LSTM, Embedding
+from keras.preprocessing import sequence
+
+import h5py
+import pickle
+import os
+import re
+
+
+def configEnv():
+    env = {}
+    env["base_dir"] = os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) )
+    env["data_dir"] = os.path.join(env["base_dir"], "data")
+    env["preproc_dir"] = os.path.join(env["data_dir"],"preprocessed_data")
+    return env
+env = configEnv()
+corpus = []
+for root,dirs,files in os.walk(env["preproc_dir"]):
+    for filename in files:
+        if filename != ".DS_Store":
+            abspath = os.path.join(root,filename)
+            filehandler = open(abspath,"rb")
+            preproc_doc = pickle.load(filehandler)
+            print(preproc_doc)
+            exit(0)
+
