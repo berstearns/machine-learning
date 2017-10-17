@@ -38,6 +38,7 @@ def tokenize_paragraph(paragraph):# {{{
         return preproc_paragraph# }}}
 
 def tokenize_doc(doc):# {{{
+
     tokenizer = RegexpTokenizer(r'\w+')
     preproc_doc = []
     paragraphs = doc.replace("\n","$$").split("$$")
@@ -49,6 +50,7 @@ def tokenize_doc(doc):# {{{
         tknz_paragraph = " ".join(tknz_paragraph)
         preproc_doc.append(tknz_paragraph)
     return preproc_doc# }}}
+
 if __name__ == "__main__":
     trainOrTest = sys.argv[1]
     env = configEnv()
@@ -57,14 +59,16 @@ if __name__ == "__main__":
     class_names = ['atheism', 'christian']
 
     preprocessed_docs = []
-    for doc in newsgroups_set.data:
+    for doc in newsgroups_set.data:# {{{
         preproc_doc = tokenize_doc(doc)
         preproc_doc = " ".join(preproc_doc)
+        exit(0)
         preprocessed_docs.append(preproc_doc)
-
     preprocessedDocs_abspath = os.path.join( env["preproc_dir"]\
-            ,trainOrTest,"preproc_docs")
-    for idx,pre_doc in enumerate(preprocessed_docs):
+	        ,trainOrTest,"preproc_docs")# }}}
+
+# writing to pickle
+    for idx,pre_doc in enumerate(preprocessed_docs):# {{{
         doc_abspath = preprocessedDocs_abspath+str(idx)+".pickle"
         filehandler = open(doc_abspath,"wb")
-        pickle.dump(pre_doc,filehandler)
+        pickle.dump(pre_doc,filehandler)# }}}

@@ -1,5 +1,6 @@
 import sys
 import os
+
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.datasets import fetch_20newsgroups
 import numpy as np
@@ -20,7 +21,7 @@ def configEnv():# {{{
     env["base_dir"] = os.path.dirname( os.path.dirname( os.path.abspath(__file__) ) )
     env["data_dir"] = os.path.join(env["base_dir"], "data")
     env["preproc_dir"] = os.path.join(env["data_dir"],"preprocessed_data")
- ,   env["models_dir"] = os.path.join(env["data_dir"],"models")
+    env["models_dir"] = os.path.join(env["data_dir"],"models")
     env["vocab_dir"] = os.path.join(env["data_dir"],"vocabularies")
     return env# }}}
 
@@ -122,14 +123,17 @@ def useLSTM_model(corpus,vocab,model,nTokens_inDoc):# {{{
     return numericalLSTM_representation# }}}
 
 if __name__ == "__main__":# {{{
-    trainOrTest = sys.argv[1]
     env = configEnv()
-    nDocsToUse = 50
-    minFreq_ofWords = 5
-    nTokens_inDoc = 20
+    trainOrTest = sys.argv[1]
+    params = {param_str.split("=")[0]:int(param_str.split("=")[1]) for param_str in sys.argv[2:]}
+    
+    nDocsToUse = params["nDocsToUse"]
+    minFreq_ofWords = params["minFreq_ofWords"]
+    nTokens_inDoc = params["nTokens_inDoc"]
+
     if trainOrTest == "train":
         corpus = load_corpus(env,trainOrTest,nDocsToUse)
-        createLSTM_model(env,corpus,nTokens_inDoc,nDocsToUse)
+        createLSTM_model(env,corpus,nTokens_inDoc,nDocsToUse,minFreq_ofWords)
     elif trainOrTest == "test":
         nDocsToTrain = 999999
         corpus = load_corpus(env,trainOrTest,nDocsToTrain)
