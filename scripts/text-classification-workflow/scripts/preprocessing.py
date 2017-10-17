@@ -62,7 +62,6 @@ if __name__ == "__main__":
     for doc in newsgroups_set.data:# {{{
         preproc_doc = tokenize_doc(doc)
         preproc_doc = " ".join(preproc_doc)
-        exit(0)
         preprocessed_docs.append(preproc_doc)
     preprocessedDocs_abspath = os.path.join( env["preproc_dir"]\
 	        ,trainOrTest,"preproc_docs")# }}}
